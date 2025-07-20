@@ -1,0 +1,37 @@
+[user]
+	name = Anhad Jai Singh
+	email = ffledgling+github@gmail.com
+
+[core]
+	editor = vim
+	autocrlf = input
+	excludesfile = ~/.gitignore_global
+
+[init]
+	defaultBranch = main
+
+[push]
+	default = simple
+	autoSetupRemote = true
+
+[pull]
+	rebase = false
+
+# SSH agent settings for caching SSH passphrase (~3 hours = 10800 seconds)
+[core]
+	sshCommand = ssh -o AddKeysToAgent=yes -o UseKeychain=yes -o IdentitiesOnly=yes
+
+# SSH connection multiplexing for better performance
+[ssh]
+	controlMaster = auto
+	controlPath = ~/.ssh/control-%h-%p-%r
+	controlPersist = 3h
+
+[color]
+	ui = auto
+	branch = auto
+	diff = auto
+	status = auto
+
+[alias]
+	sl = log --oneline --graph --decorate --all
