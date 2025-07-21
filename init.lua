@@ -32,6 +32,10 @@ vim.opt.relativenumber = false
 -- Current line highlighting
 vim.opt.cursorline = true
 
+-- Bracket matching and highlighting
+vim.opt.showmatch = true
+vim.opt.matchtime = 2
+
 -- Colors and appearance
 vim.opt.background = "dark"
 vim.opt.termguicolors = false
@@ -41,6 +45,9 @@ vim.opt.magic = true
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
 vim.opt.hlsearch = true
+
+-- Clear search highlighting when pressing Escape in normal mode
+vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
 -- Completion
 vim.opt.omnifunc = 'syntaxcomplete#Complete'
@@ -180,6 +187,7 @@ require("lazy").setup({
   -- Formatting
   {
     "stevearc/conform.nvim",
+    dependencies = { "williamboman/mason.nvim" },
     opts = {
       formatters_by_ft = {
         python = { "black", "isort" },
@@ -199,6 +207,14 @@ require("lazy").setup({
         desc = "Format buffer",
       },
     },
+  },
+
+  -- Bracket highlighting and matching
+  {
+    "luochen1990/rainbow",
+    config = function()
+      vim.g.rainbow_active = 1
+    end,
   },
 
   -- Colorschemes
