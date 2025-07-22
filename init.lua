@@ -46,6 +46,10 @@ vim.opt.ignorecase = true
 vim.opt.smartcase = true
 vim.opt.hlsearch = true
 
+-- Folding
+vim.opt.foldmethod = 'syntax'  -- Enable syntax-based folding
+vim.opt.foldlevelstart = 99    -- Start with all folds open
+
 -- Clear search highlighting when pressing Escape in normal mode
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 

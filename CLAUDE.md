@@ -14,3 +14,4 @@ The user primarily works with these languages (use for tooling setup, syntax hig
 - Test configurations before committing
 - Follow existing naming patterns
 - Run linting/formatting tools when available
+- Explain config options that aren't self-explanatory when adding them
