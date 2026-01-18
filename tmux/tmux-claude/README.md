@@ -9,14 +9,11 @@ When running multiple Claude Code sessions across tmux windows, it's hard to tel
 ## The Solution
 
 Uses Claude Code hooks to set tmux window status instantly:
-- `●` (bright, highlighted) — Claude is waiting for input
-- `○` (dim) — Claude is busy processing
-- No indicator — No Claude session in that window
+- **Waiting for input**: Black background + white text + `●`
+- **Busy processing**: Orange background + black text + `○`
+- **No Claude**: Normal window style
 
-```
-1:api  2:frontend●  3:docs○  4:logs
-        ^waiting    ^busy
-```
+Windows needing your attention stand out with inverted colors.
 
 ## Installation
 
@@ -48,7 +45,7 @@ Add these hooks to `~/.claude/settings.json`:
         "hooks": [
           {
             "type": "command",
-            "command": "tmux set-option -w @claude-status busy 2>/dev/null || true"
+            "command": "tmux set-option -t \"$TMUX_PANE\" -w @claude-status busy 2>/dev/null || true"
           }
         ]
       }
@@ -59,7 +56,7 @@ Add these hooks to `~/.claude/settings.json`:
         "hooks": [
           {
             "type": "command",
-            "command": "tmux set-option -w @claude-status waiting 2>/dev/null || true"
+            "command": "tmux set-option -t \"$TMUX_PANE\" -w @claude-status waiting 2>/dev/null || true"
           }
         ]
       }
@@ -70,7 +67,7 @@ Add these hooks to `~/.claude/settings.json`:
         "hooks": [
           {
             "type": "command",
-            "command": "tmux set-option -w @claude-status waiting 2>/dev/null || true"
+            "command": "tmux set-option -t \"$TMUX_PANE\" -w @claude-status waiting 2>/dev/null || true"
           }
         ]
       }
@@ -86,23 +83,6 @@ tmux source-file ~/.tmux.conf
 ```
 
 New Claude sessions will show indicators automatically.
-
-## Configuration
-
-### Style Toggle
-
-The waiting indicator can be white or magenta. Run in tmux command mode (`prefix` + `:`):
-
-| Command | Description |
-|---------|-------------|
-| `claude-style-white` | Use white indicator |
-| `claude-style-magenta` | Use magenta indicator |
-
-Or set in your `.tmux.conf` before sourcing the plugin:
-
-```tmux
-set-option -g @claude-status-style "magenta"
-```
 
 ## How It Works
 
