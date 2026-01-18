@@ -8,7 +8,7 @@ When running multiple Claude Code sessions across tmux windows, it's hard to tel
 
 ## The Solution
 
-A simple status line indicator:
+Uses Claude Code hooks to set tmux window status instantly:
 - `●` (bright, highlighted) — Claude is waiting for input
 - `○` (dim) — Claude is busy processing
 - No indicator — No Claude session in that window
@@ -20,59 +20,103 @@ A simple status line indicator:
 
 ## Installation
 
-1. Clone or copy the `tmux-claude` directory to `~/.tmux/tmux-claude/`:
+### 1. Set up tmux config
+
+Copy or symlink `tmux-claude` to `~/.tmux/tmux-claude/`:
 
 ```bash
 mkdir -p ~/.tmux
 cp -r tmux-claude ~/.tmux/
-chmod +x ~/.tmux/tmux-claude/claude-status.sh
 ```
 
-2. Add to your `~/.tmux.conf`:
+Add to your `~/.tmux.conf`:
 
 ```tmux
 source-file ~/.tmux/tmux-claude/claude-status.conf
 ```
 
-3. Reload tmux config:
+### 2. Configure Claude Code hooks
+
+Add these hooks to `~/.claude/settings.json`:
+
+```json
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "tmux set-option -w @claude-status busy 2>/dev/null || true"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "tmux set-option -w @claude-status waiting 2>/dev/null || true"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "tmux set-option -w @claude-status waiting 2>/dev/null || true"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+### 3. Reload
 
 ```bash
 tmux source-file ~/.tmux.conf
 ```
 
+New Claude sessions will show indicators automatically.
+
 ## Configuration
 
-### Commands
+### Style Toggle
 
-Run these in tmux command mode (`prefix` + `:`):
+The waiting indicator can be white or magenta. Run in tmux command mode (`prefix` + `:`):
 
 | Command | Description |
 |---------|-------------|
-| `claude-restart` | Restart the status monitor |
 | `claude-style-white` | Use white indicator |
 | `claude-style-magenta` | Use magenta indicator |
 
-### Poll Interval
+Or set in your `.tmux.conf` before sourcing the plugin:
 
-By default, the script checks every 2 seconds. To change:
-
-```bash
-export CLAUDE_STATUS_POLL_INTERVAL=1  # Check every second
+```tmux
+set-option -g @claude-status-style "magenta"
 ```
 
 ## How It Works
 
-A background shell script polls all tmux panes every 2 seconds:
-1. Identifies panes running `claude` (by process name)
-2. Captures the pane content to check for the `>` input prompt
-3. Sets a `@claude-status` window option (`waiting`, `busy`, or `none`)
-4. The tmux status format reads this option to display indicators
+Claude Code hooks trigger tmux commands:
+- `UserPromptSubmit` → sets `@claude-status` to `busy`
+- `Notification` → sets `@claude-status` to `waiting`
+- `Stop` → sets `@claude-status` to `waiting`
+
+The tmux status format reads `@claude-status` and displays the appropriate indicator.
 
 ## Requirements
 
-- tmux 3.0+ (for format conditionals)
-- bash
-- Claude Code CLI
+- tmux 3.0+
+- Claude Code CLI with hooks support
 
 ## License
 
