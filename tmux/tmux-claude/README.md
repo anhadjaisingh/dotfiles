@@ -44,13 +44,14 @@ tmux source-file ~/.tmux.conf
 
 ### Style Toggle
 
-The waiting indicator can be white or magenta. Toggle with:
-- `prefix` + `Ctrl-c`
+The waiting indicator can be white or magenta. Run in tmux command mode (`prefix` + `:`):
 
-Or set directly in your `.tmux.conf`:
 ```tmux
-set-option -g @claude-status-style "magenta"  # or "white"
+set-option -g @claude-status-style "magenta"
+set-option -g @claude-status-style "white"
 ```
+
+Or set in your `.tmux.conf` before sourcing the plugin.
 
 ### Poll Interval
 
@@ -62,8 +63,11 @@ export CLAUDE_STATUS_POLL_INTERVAL=1  # Check every second
 
 ### Manual Restart
 
-If the status monitor stops working:
-- `prefix` + `Alt-c` — Restart the monitor
+If the status monitor stops working, run in tmux command mode:
+
+```tmux
+run-shell '~/.tmux/tmux-claude/claude-status.sh &'
+```
 
 ## How It Works
 
