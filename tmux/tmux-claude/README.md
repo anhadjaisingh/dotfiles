@@ -9,7 +9,7 @@ When running multiple Claude Code sessions across tmux windows, it's hard to tel
 ## The Solution
 
 Uses Claude Code hooks to set tmux window status instantly:
-- **Waiting for input**: Bold bright white text + `⬤`
+- **Waiting for input**: Bold bright white text + `▲`
 - **Busy processing**: Orange text + `✽`
 - **No Claude**: Normal window style
 - **Current window**: Underlined
@@ -18,9 +18,26 @@ Windows needing your attention stand out with bold bright text and prominent sym
 
 ## Installation
 
-### 1. Set up tmux config
+### Quick Install
 
-Copy or symlink `tmux-claude` to `~/.tmux/tmux-claude/`:
+```bash
+# 1. Clone or download this directory to ~/.tmux/tmux-claude/
+git clone https://github.com/anhadjaisingh/dotfiles.git /tmp/dotfiles
+mkdir -p ~/.tmux
+cp -r /tmp/dotfiles/tmux/tmux-claude ~/.tmux/
+
+# 2. Add to your ~/.tmux.conf
+echo 'source-file ~/.tmux/tmux-claude/claude-status.conf' >> ~/.tmux.conf
+
+# 3. Reload tmux config
+tmux source-file ~/.tmux.conf
+```
+
+### Manual Setup
+
+#### 1. Set up tmux config
+
+Copy the `tmux-claude` directory to `~/.tmux/`:
 
 ```bash
 mkdir -p ~/.tmux
@@ -33,9 +50,9 @@ Add to your `~/.tmux.conf`:
 source-file ~/.tmux/tmux-claude/claude-status.conf
 ```
 
-### 2. Configure Claude Code hooks
+#### 2. Configure Claude Code hooks
 
-Add these hooks to `~/.claude/settings.json`:
+Edit `~/.claude/settings.json` and add the following hooks (merge with existing hooks if you have any):
 
 ```json
 {
@@ -77,13 +94,40 @@ Add these hooks to `~/.claude/settings.json`:
 }
 ```
 
-### 3. Reload
+#### 3. Reload and test
+
+Reload your tmux configuration:
 
 ```bash
 tmux source-file ~/.tmux.conf
 ```
 
-New Claude sessions will show indicators automatically.
+**Important**: The hooks only apply to new Claude Code sessions. Exit and restart any running Claude sessions for the indicators to work.
+
+To test: Start a new Claude session in a tmux window, and you should see the `✽` symbol appear when Claude is processing, and `▲` when it's waiting for your input.
+
+## Troubleshooting
+
+**Indicators not showing up?**
+1. Make sure you've reloaded tmux: `tmux source-file ~/.tmux.conf`
+2. Exit and restart your Claude Code session (hooks only apply to new sessions)
+3. Check that `~/.claude/settings.json` has the hooks configured correctly
+4. Verify you're running Claude inside a tmux session
+
+**Hooks not working in existing Claude sessions?**
+- The hooks are configured when Claude starts. You must exit and restart Claude for them to take effect.
+
+**Want to test manually?**
+```bash
+# Set a window to waiting state
+tmux set-option -w @claude-status waiting
+
+# Set a window to busy state
+tmux set-option -w @claude-status busy
+
+# Clear the status
+tmux set-option -wu @claude-status
+```
 
 ## How It Works
 
@@ -92,12 +136,13 @@ Claude Code hooks trigger tmux commands:
 - `Notification` → sets `@claude-status` to `waiting`
 - `Stop` → sets `@claude-status` to `waiting`
 
-The tmux status format reads `@claude-status` and displays the appropriate indicator.
+The tmux status format reads `@claude-status` and displays the appropriate indicator with styling.
 
 ## Requirements
 
-- tmux 3.0+
+- tmux 3.0+ (for conditional formatting support)
 - Claude Code CLI with hooks support
+- A terminal with UTF-8 support (for symbols ▲ and ✽)
 
 ## License
 
