@@ -9,11 +9,12 @@ When running multiple Claude Code sessions across tmux windows, it's hard to tel
 ## The Solution
 
 Uses Claude Code hooks to set tmux window status instantly:
-- **Waiting for input**: Black background + white text + `●`
-- **Busy processing**: Orange background + black text + `○`
+- **Waiting for input**: Bold bright white text + `⬤`
+- **Busy processing**: Orange text + `✽`
 - **No Claude**: Normal window style
+- **Current window**: Underlined
 
-Windows needing your attention stand out with inverted colors.
+Windows needing your attention stand out with bold bright text and prominent symbols.
 
 ## Installation
 
