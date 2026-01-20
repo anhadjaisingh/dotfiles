@@ -89,6 +89,17 @@ Edit `~/.claude/settings.json` and add the following hooks (merge with existing 
           }
         ]
       }
+    ],
+    "SessionEnd": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "tmux set-option -t \"$TMUX_PANE\" -wu @claude-status 2>/dev/null || true"
+          }
+        ]
+      }
     ]
   }
 }
@@ -135,6 +146,7 @@ Claude Code hooks trigger tmux commands:
 - `UserPromptSubmit` → sets `@claude-status` to `busy`
 - `Notification` → sets `@claude-status` to `waiting`
 - `Stop` → sets `@claude-status` to `waiting`
+- `SessionEnd` → clears `@claude-status` (removes indicator when Claude exits)
 
 The tmux status format reads `@claude-status` and displays the appropriate indicator with styling.
 
